@@ -14,3 +14,4 @@ tower = Tower('xyz-ansibleT.com', 'Username', 'password', secure=True, ssl_verif
 #to print list of servers in the inventory
 for host in tower.hosts:
     print(host.name)
+#
