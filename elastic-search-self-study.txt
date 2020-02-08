@@ -1,0 +1,147 @@
+
+echo "using vagrant boxes for this Demo"
+vagrant ssh
+
+echo "checking if elasticsearch and java is installed or not"
+
+rpm -qa | egrep -i 'elastic|java|jre|jdk'
+sudo su -
+
+echo "already kept RPMs ready in /tmp"
+cd /tmp
+
+ rpm -ivh elasticsearch-7.5.2-x86_64.rpm
+ rpm -ivh jre-8u241-linux-x64.rpm
+
+ sysctl -a | grep vm.max_map_count
+ vim /etc/elasticsearch/elasticsearch.yml
+
+# cat /etc/elasticsearch/elasticsearch.yml | grep -v "#"
+cluster.name: my-app1
+node.name: elastic1
+path.data: /var/lib/elasticsearch
+path.logs: /var/log/elasticsearch
+network.host: 192.168.10.40
+http.port: 9200
+discovery.seed_hosts: ["elastic1"]
+#
+
+ firewall-cmd --zone=public --permanent --add-service=elasticsearch
+ firewall-cmd --zone=public --permanent --add-port=9200/tcp
+ firewall-cmd --zone=public --permanent --list-services
+ firewall-cmd --zone=public --permanent --list-ports
+ firewall-cmd --reload
+
+ systemctl daemon-reload
+ systemctl enable elasticsearch.service
+ systemctl start elasticsearch.service
+
+ less /var/log/elasticsearch/my-app1.log | tail
+
+ echo "testing if elasticsearch is up ?"
+
+# curl elastic1:9200
+{
+  "name" : "elastic1",
+  "cluster_name" : "my-app1",
+  "cluster_uuid" : "_na_",
+  "version" : {
+    "number" : "7.5.2",
+    "build_flavor" : "default",
+    "build_type" : "rpm",
+    "build_hash" : "8bec50e1e0ad29dad5653712cf3bb580cd1afcdf",
+    "build_date" : "2020-01-15T12:11:52.313576Z",
+    "build_snapshot" : false,
+    "lucene_version" : "8.3.0",
+    "minimum_wire_compatibility_version" : "6.8.0",
+    "minimum_index_compatibility_version" : "6.0.0-beta1"
+  },
+  "tagline" : "You Know, for Search"
+}
+#
+
+echo "adding dummy sample data"
+-----
+curl -X POST 'elastic1:9200/company/emp/1' \
+-H 'Content-Type: application/json' \
+-d '{
+    "firstname" : "Satish",
+    "lastname" : "Navkar",
+    "job_role" : "UnixSA"
+}'
+-------
+curl -X POST 'elastic1:9200/company/emp/2' \
+-H 'Content-Type: application/json' \
+-d '{
+    "firstname" : "Priyesh",
+    "lastname" : "Potdar",
+    "job_role" : "SrArchitect"
+}'
+-------
+
+curl -X GET 'elastic1:9200/company/emp/1'
+curl -X GET 'elastic1:9200/company/emp/2'
+
+--------
+
+echo "find out location data"
+cat /etc/elasticsearch/elasticsearch.yml | grep data
+
+echo "take backup using tar"
+cd /var/lib/elasticsearch/nodes/0/
+tar -cf indices.tar indices/
+
+echo "securely copy data to another node"
+scp -pr indices.tar root@192.168.10.48:/var/lib/elasticsearch/nodes/0/
+
+exit;exit
+
+
+=================================
+=== On Another elastic server ===
+
+cd ../good-rhel8-box-2/
+vagrant ssh
+
+echo " elasticsearch is already made up and running to cut short length of this recording "
+
+sudo su -
+
+# cat /etc/elasticsearch/elasticsearch.yml | grep -v "#"
+cluster.name: my-app2
+node.name: elastic2
+path.data: /var/lib/elasticsearch
+path.logs: /var/log/elasticsearch
+network.host: 192.168.10.48
+http.port: 9200
+discovery.seed_hosts: ["elastic2"]
+#
+
+systemctl status elasticsearch
+
+# curl elastic2:9200
+{
+  "name" : "elastic2",
+  "cluster_name" : "my-app2",
+  "cluster_uuid" : "_na_",
+  "version" : {
+    "number" : "7.5.2",
+    "build_flavor" : "default",
+    "build_type" : "rpm",
+    "build_hash" : "8bec50e1e0ad29dad5653712cf3bb580cd1afcdf",
+    "build_date" : "2020-01-15T12:11:52.313576Z",
+    "build_snapshot" : false,
+    "lucene_version" : "8.3.0",
+    "minimum_wire_compatibility_version" : "6.8.0",
+    "minimum_index_compatibility_version" : "6.0.0-beta1"
+  },
+  "tagline" : "You Know, for Search"
+}
+#
+
+cd /var/lib/elasticsearch/nodes/0/
+tar -xf indices.tar
+chown -R elasticsearch:elasticsearch indices/
+
+curl -X GET 'elastic2:9200/company/emp/1'
+curl -X GET 'elastic2:9200/company/emp/2'
