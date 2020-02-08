@@ -46,4 +46,3 @@ SAN migration (possible vendors involved : EMC NetApp 3PAR)
    echo 1 > /sys/class/fc_host
     or
    echo "- - -" > /sys/class/scsi_host/hostX/scan
-     
