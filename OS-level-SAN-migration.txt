@@ -1,1 +1,49 @@
--- TDB ---
+
+SAN migration (possible vendors involved : EMC NetApp 3PAR)
+
+--- Double-check this plan ---- Try on dummy ---
+
+** Collect all pre-requisites
+
+   vxprint -htg <DG>
+   vxconfigbackup -l <mount>   ## check /etc/cbr/vx/bk/
+   systool -c fc_host -v | grep -i port
+
+** Scan all new "disks"
+
+   echo "- - -" > /sys/class/scsi_host/hostX/scan
+   vxdctl enable; vxdisk scandisks
+
+** Take new "disks" in VxVM control
+
+   vxdisksetup -i <new-disk's> ...
+
+** Add new disks to appropriate DG
+
+   vxdg -g <DG> adddisk <disk-name1>=<new-disk01> <disk-name2>=<new-disk02>
+
+** Mirror old disk with new disk .. to preserve data from disk to be removed
+
+   vxmirror -bg <DG> volume <VOL> <old-disk01> <new-disk01> ..  --- check syntax ??
+   or
+   vxmirror disk01 disk02
+
+** Monitor mirroring process
+
+   vxtask list
+
+** Break mirror after sync is completed
+
+   vxplex -g <DG> -o rm dis <old-disk01> ..
+
+** Remove disks from DG and remove from VxVM control
+
+   vxdisk rmdisk <old-disk01> ...   ## check .. needs reclaim steps ?
+   vxdiskunsetup -c <old-disk01> ..  ## check if really required
+
+** Rescan after disks are removed from storage-end
+
+   echo 1 > /sys/class/fc_host
+    or
+   echo "- - -" > /sys/class/scsi_host/hostX/scan
+     
