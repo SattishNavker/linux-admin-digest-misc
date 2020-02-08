@@ -22,11 +22,17 @@ SAN migration (possible vendors involved : EMC NetApp 3PAR)
 
    vxdg -g <DG> adddisk <disk-name1>=<new-disk01> <disk-name2>=<new-disk02>
 
-** Mirror old disk with new disk .. to preserve data from disk to be removed
+** Mirror old disk with new disk .. to preserve data from disk to be removed ==== need to find exact step here
 
    vxmirror -bg <DG> volume <VOL> <old-disk01> <new-disk01> ..  --- check syntax ??
    or
-   vxmirror disk01 disk02
+   vxmirror -g <DG> -a <new-disk01> <new-disk02> ..
+   or
+   vxmirror -g <DG> <old-disk01>  <new-disk01>
+   or
+   vxassist -b -g <DG> mirror <VOL> layout=nostripe alloc=disk01,..2,..3,..
+   or
+   vxmirror -bg <DG> volume alloc emcx  --- ??
 
 ** Monitor mirroring process
 
@@ -46,3 +52,17 @@ SAN migration (possible vendors involved : EMC NetApp 3PAR)
    echo 1 > /sys/class/fc_host
     or
    echo "- - -" > /sys/class/scsi_host/hostX/scan
+
+
+===== Additional .. if disk is showing failed .. check if really failed or mark failing flag off
+
+   vxedit -g <DG> set failing=off <disk01>
+
+* Another sample .. setting owner of raw disks .. in case of sybase mostly
+
+   vxedit -g <DG> set user=sybase group=sybase <raw-vol>
+
+* Setting clone flag off or on
+
+   vxdisk set <disk-name> clone=<off/on>
+   ++ # vxdisk updateudid <disk-name>
