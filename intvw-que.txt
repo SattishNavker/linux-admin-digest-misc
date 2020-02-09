@@ -1,0 +1,57 @@
+<< Sort questions based on sequence and topic .. sequence basic to complex .. topic as per sub-systems >>
+
+=== General Questions ===
+
++ Tell me names of any five important files in the Linux ? ex: /etc/fstab /var/log/messages /var/log/sa/sarXX ..
++ Tell me names of any five important directories in the Linux ? ex: /dev /proc /sys /root /bin
++ How to check metadata of LVM ? $cat /etc/lvm/archive/<vg>_xxx.vg -also in = /etc/lvm/backup
++ How to check/see first 512 (MBR) bytes of device ?
+  - 3ways: [1] dd if=/dev/sda bs=512 count=1 | hexdump -C
+           [2] hd -n 512 /dev/sda
+           [3] dd if=/dev/sda of=/xyz bs=512 count=1 <Enter> then read file "/xyz"
++ How to fill FS/hard-drive using dd / what is sparse file ?
+  - many ways (dont use "seek" in dd)  dd if=/dev/zero of=filename bs=$((1024*1024)) count=$((10*1024))
+  - Simpler way - fallocate -l 150G
++ HBA port finding in Linux ? or scanning >> ech "- - -" > /sys/class/scsi_host/hostX/scan .. echo "channel(-) SCSI-target-ID(-) LUN(-)"
++ Bonding
++ How to check link-speed and duplex for NIC ? ethtool ethX
++ How to list only links in Linux ? ex: many ways but basic idea is >> find . -type l -ls
++ If file has 000 permission then who can access it ? : root can access it but read-only
++
++
+
+
+=== Scenario based questions ====
+
++
++
++
+
+
+=== VCS / VxVM questions ===
+
++
++
++
+
+== Difference between ====
+
++ Vmware thin vs thick provisioning ?
++ RHEL version (6 vs 7) (7 vs 8)
++ TCP vs UDP / Switch vs Router / IPv4 vs IPv6
++
+
+
+=== Hardware related ===
+
++ Finding if system is phy/virt from OS end ? = dmidecode -t1 or dmidecode | grep -A5 "System Information" or grep vmware or grep Product
++ MCE logs / taking server consoles / firmware upgrades
++
++
+
+=== VMware related ===
+
++ Explain DRS in vmware / vmotion / svmotion etc.
++ Extending CPU/RAM in VMware is dependent of version of VMware or RHEL ?
++
++
