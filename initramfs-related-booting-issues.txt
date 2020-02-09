@@ -1,0 +1,61 @@
+--- Basic booting/initramfs troubleshooting ---
+
+Agenda:
+- Basic troubleshooting initramfs file
+- How to extract data from the initramfs files and how to compare easily.
+
+Use cases
+- System is able to boot with the previously installed kernels while unable to boot with new kernel.
+- System failed to boot after an update.
+
+Common cause for the issue.
+- Incomplete/missing initramfs build while kernel is installed
+- Incomplete kernel installtion of kernel package
+- Missing modules in the initramfs files
+- LVM filters
+
+Data to be gathered.
+- Screenshot of the issue after removing 'rhgb' and 'quiet' parameters. This will help us to get some basic idea about issue.
+- Sosreport from the rescue mode or if customer is able to boot into previously installed kernel.
+- Initramfs files for the working and non working kernel.
+
+Important links/KCS articles:
+
+~~~~~~~~~~~~~~~~
+How do I manually modify the boot parameter in grub before system boot?
+https://access.redhat.com/site/solutions/32726
+
+How to rebuild the initial ramdisk image in Red Hat Enterprise Linux
+https://access.redhat.com/solutions/1958
+
+How to rebuild the initial ram disk, including in linux rescue mode
+https://access.redhat.com/site/solutions/365693
+
+How to examine or extract the contents of an initramfs or initrd file?
+https://access.redhat.com/solutions/289313
+
+After update, kernel panic at boot with error: Unable to mount root fs on unknown-block(0,0)
+https://access.redhat.com/solutions/57018
+
+Kernel panics after upgrading system from RHEL6.3 to RHEL6.4 with error message `No root device "block:/dev/mapper/rootvg-root_lv" found`
+https://access.redhat.com/solutions/488733
+
+kernel panic occurs after installing and booting a new kernel if lvm filters are applied
+https://access.redhat.com/solutions/17176
+~~~~~~~~~~~~~~~~
+
+Basic checks :
+~~~~~~~~~~~~~~~~
+- Compare grub.conf files for new and old kernel
+- Check the kernel packages installed in the system
+- check the initramfs files in the /boot directory from sosreport
+
+Demo with Examples:
+ - Missing initramfs files after system upgrade
+ - Misconfiguration of LVM filters in the system
+ - Missing important storage modules after patching
+ - Glibc modules missing in the initramfs
+
+rpm2cpio bash.rpm | cpio -idmv
+gunzip -c /boot/initramfs-XXX.img | cpio -id
+/usr/lib/dracut/skipcpio /boot/initramfs-XXX.img | gunzip -c | cpio -id

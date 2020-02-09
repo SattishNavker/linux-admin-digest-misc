@@ -1,57 +1,156 @@
 << Sort questions based on sequence and topic .. sequence basic to complex .. topic as per sub-systems >>
 
-=== General Questions ===
+=== General and Overlapping Questions ===
+
++ Projects worked on ? Server hardening aspects ?
+
++ Current role ?
+
+==== File-system related ===
 
 + Tell me names of any five important files in the Linux ? ex: /etc/fstab /var/log/messages /var/log/sa/sarXX ..
+
 + Tell me names of any five important directories in the Linux ? ex: /dev /proc /sys /root /bin
+
 + How to check metadata of LVM ? $cat /etc/lvm/archive/<vg>_xxx.vg -also in = /etc/lvm/backup
+
 + How to check/see first 512 (MBR) bytes of device ?
+
   - 3ways: [1] dd if=/dev/sda bs=512 count=1 | hexdump -C
            [2] hd -n 512 /dev/sda
            [3] dd if=/dev/sda of=/xyz bs=512 count=1 <Enter> then read file "/xyz"
+
 + How to fill FS/hard-drive using dd / what is sparse file ?
+
   - many ways (dont use "seek" in dd)  dd if=/dev/zero of=filename bs=$((1024*1024)) count=$((10*1024))
   - Simpler way - fallocate -l 150G
-+ HBA port finding in Linux ? or scanning >> ech "- - -" > /sys/class/scsi_host/hostX/scan .. echo "channel(-) SCSI-target-ID(-) LUN(-)"
-+ Bonding
-+ How to check link-speed and duplex for NIC ? ethtool ethX
+
 + How to list only links in Linux ? ex: many ways but basic idea is >> find . -type l -ls
+
 + If file has 000 permission then who can access it ? : root can access it but read-only
+
++ Explain fields of fstab file ? device/mount-pt/options/fsck/dump
+
++ NFS should automatically mount after reboot ? : /etc/fstab , _netdev ??
+
++ 
+
+
+==== Networking Related =====
+
++ HBA port finding in Linux ? or scanning : echo "- - -" > /sys/class/scsi_host/hostX/scan .. echo "channel(-) SCSI-target-ID(-) LUN(-)"
+
++ How to check link-speed and duplex for NIC ? : ethtool ethX
+
++ In bonding how to change active link(slave) on line ?
+
+  - cat /proc/net/bonding/bond0 -- to see bonding info like slaves/policy/active-slave elastic
+  - ifenslave -c bondX <2nd-nic> ----c stands for “change active”
+
++ How to change active faulty NIC within bonding online ?
+
+  - Steps -- 1> change active slave to secondary one in bond ; 2> Add new healthy NIC; 3> Remove faulty NIC; 4> change active-slave to new-NIC;
+  - method1 : cat /proc/net/bonding/bond0; ifenslave -c bondX <2nd-nic>; ifenslave bondX <new-nic>; ifenslave -d bondX <old-pri-nic
+  - method2 : cat /sys/class/net/bondX/bonding/slaves; echo -<old-pri-nic> > /sys/.../slaves; echo +<new-nic> > /sys/.../slaves
+  - make above changes permanent >> rm /etc/sysconfig/network-scripts/ifcfg-<old-pri-nic> ; vim /etc/sysconfig/network-scripts/ifcfg-<new-nic>
+
++ BNY : What is VLAN tagging ??
+
++ MTU,ttl, ... concepts
+
++ Bonding config file ? : /etc/sysconfig/network-scripts/ifcfg-bondX = bond ?? /etc/sysconfig/network-scripts/ifcfg-<nic> = slave ??
+
++
+
+==== Booting related (grub/initrd/initramfs/rebuild/kdump/)====
+
++ How to open initrd/initramfs and what it contains ? :
+
++ What grub contains ? : initramfs kernel .. check
+
++
+
+==== Processes/services related (systemd/services/daemons/ps) ====
+
++
+
++
+
++
+
++
+
+
+=== Patching related (yum/rpm/dnf/apt/zypper/build-source)=====
+
++
+
++
+
++
+
+
+=== VCS / VxVM questions (commands/errors)===
+
++ What all things needs to be considered before building a two node VCS cluster ? (pre-requisites) : HB/LLT/Speed/cluster_name/node_names etc..
++ VxVM show disk has problem and show it as failing but no issue with disk ; how to remove failing error ? vxedit ..
++ What all things will you check before you start supporting 2-node cluster ? : online/offline;dependencies/VIPs/switch-bet-nodes/ etc..
++ How to check status of each resource within a VCS service group ? : hares -display -attribute State -group <SG> -sys <node>
 +
 +
 
 
-=== Scenario based questions ====
-
-+
-+
-+
 
 
-=== VCS / VxVM questions ===
-
-+
-+
-+
-
-== Difference between ====
-
-+ Vmware thin vs thick provisioning ?
-+ RHEL version (6 vs 7) (7 vs 8)
-+ TCP vs UDP / Switch vs Router / IPv4 vs IPv6
-+
+=== Ansible related (modules/methods/conditions)====
 
 
-=== Hardware related ===
+
+=== Hardware related (console/failures/NMIs-n-switches) ===
 
 + Finding if system is phy/virt from OS end ? = dmidecode -t1 or dmidecode | grep -A5 "System Information" or grep vmware or grep Product
 + MCE logs / taking server consoles / firmware upgrades
 +
 +
 
-=== VMware related ===
+=== VMware related (ESX/datastores/networks)===
 
-+ Explain DRS in vmware / vmotion / svmotion etc.
++ Explain DRS (Distributed Resource Scheduler - HA) in vmware / vmotion / svmotion (s=storage).. etc..
 + Extending CPU/RAM in VMware is dependent of version of VMware or RHEL ?
++ RDM (Raw Device Mapping) disks / vmdk disks ? VMware-clone-vs-VMware-templates ?
++ VMware VM in grey state ? check events logs ?
++ VxVM daemons and VCS daemons .. what if vxconfigd is down ?
 +
+
+
+== Difference between (random topics)====
+
++ Vmware thin vs thick provisioning ? Plex vs Sub-disks ?
++ RHEL version (6 vs 7) (7 vs 8) ? ansible vs puppet ?
++ TCP vs UDP / Switch vs Router / IPv4 vs IPv6 / SAN vs NAS /
++
++
+
+
+=== Scenario based questions (all inclusive)====
+
++ memory issue troubleshooting :
++ CPU-load issue troubleshooting :
++ Performance issue troubleshooting :
++ Networking issue troubleshooting :
++ Application issue troubleshooting :
++ VCS/VxVM issue troubleshooting :
++ Booting issue troubleshooting :
++ Patchin issue troubleshooting :
++ Disk usage issue troubleshooting :
++ Permissions issue troubleshooting :
++ 3 servers on difference versions, how to bring them to same level ? : highest level, patch to make same; compare every config to make same
++ Java Processes getting killed, perform health check from OS end ? (process/services)
++ Server not reachable what all things will you check ? (networking/OS/hardware/performance)
++
+
+=== Solaris related (mixed) ===
+
++ How to copy partition table form one disk to another ? : prtvtoc <> | ...
+
 +
