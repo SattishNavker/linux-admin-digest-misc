@@ -6,6 +6,23 @@
 
 + Current role ?
 
+
+==== Shell-scripting related ===
+
++ CTS reporting script to list files and directories :
+   find <location> -type d -exec ls -ld {}\; > <target-file1>; find <location> -type f -exec ls -ld {}\; > <target-file1>
+   awk -F "/" '{ for(i=2;i<NF;i++) printf $i "/"; printf $NF }' <target-file> > <target-file2>
+   sed 's/^/\//' <target-file2> > <target-file3>
+
++ $0 / $n / $# / $* / $@ / $? / $$ / $! + script to set variable on every login ? .bashrc .bash_profile
+
++
+
++
+
++
+
+
 ==== File-system related ===
 
 + Tell me names of any five important files in the Linux ? ex: /etc/fstab /var/log/messages /var/log/sa/sarXX ..
@@ -33,14 +50,25 @@
 
 + NFS should automatically mount after reboot ? : /etc/fstab , _netdev ??
 
-+ 
++ pvs (UUID mismatch) / vgs (deport) / lvs (deactived) ... vgmove complete process / disk remove complete process
 
++ Which file-system can be expanded ? : 2.6/ext2/3/4 (resize_inode)
+
++ suid(4) / sgid(2) / sticky(1) = umask(022)
+
++
+
++
+
++
+
++
 
 ==== Networking Related =====
 
 + HBA port finding in Linux ? or scanning : echo "- - -" > /sys/class/scsi_host/hostX/scan .. echo "channel(-) SCSI-target-ID(-) LUN(-)"
 
-+ How to check link-speed and duplex for NIC ? : ethtool ethX
++ How to check link-speed and duplex for NIC ? : Linux = ethtool ethX // Solaris = dladm show-dev
 
 + In bonding how to change active link(slave) on line ?
 
@@ -60,7 +88,19 @@
 
 + Bonding config file ? : /etc/sysconfig/network-scripts/ifcfg-bondX = bond ?? /etc/sysconfig/network-scripts/ifcfg-<nic> = slave ??
 
++ File to configure routing in linux ? : /etc/sysconfig/network-scripts/route-<nic> // cmd : ip route [add|del|app|..]
+
++ How to check if port on another server is open or not ? : telnet <target-ip> <PORT> / nc -zv <target-ip> <port/port-range>
+
 +
+
++
+
++
+
++
+
+
 
 ==== Booting related (grub/initrd/initramfs/rebuild/kdump/)====
 
@@ -68,13 +108,21 @@
 
 + What grub contains ? : initramfs kernel .. check
 
-+
-
-==== Processes/services related (systemd/services/daemons/ps) ====
++ kernel = noop/elevator/deadline
 
 +
 
 +
+
++
+
++
+
+==== Processes/services related (systemd/services/daemons/ps/modules) ====
+
++ insmod / rmmod / modprobe / sysctl -a | -w /
+
++ DNS = PTR/CNAME/A/MX
 
 +
 
@@ -83,12 +131,30 @@
 
 === Patching related (yum/rpm/dnf/apt/zypper/build-source)=====
 
-+
++ How to skip kernel (32-bit packages) package patching when using yum for OS update ? :
+   Method1 : yum update --exclude=PACKAGENAME // or -x=PACKAGENAME
+   Method2 : edit the /etc/yum.conf -- exclude=kernel* redhat-release* // exclude=*.i?86 *.i686
+   Method3 : Exclude entire repo == yum --disablerepo=<repo-name>
+
++ Backout plan for patching ? : solaris mirror/vm-snapshot/restore-to-last backup point
+
++ When kernel-rpm is installed, how does it updates entry in /etc/grub.conf ?
+
++ How to install rpm forcefully without its dependencies in place ? : rpm -ivh .rpm --nodeps || # rpm -ivh .rpm --force
+
++ yum install --downloadonly --downloaddir=/path || yum deplist <package> || repoquery --requires --resolve <package> / yum info <>/ yum updateinfo
+
++ RPM to solve its dependencies ? : if all rpms are under same directory then "rpm -i xyz.rpm" resolves all its dependencies.
+
++ How to remove rpm package ? : rpm -e
 
 +
 
 +
 
++
+
++
 
 === VCS / VxVM questions (commands/errors)===
 
@@ -96,10 +162,13 @@
 + VxVM show disk has problem and show it as failing but no issue with disk ; how to remove failing error ? vxedit ..
 + What all things will you check before you start supporting 2-node cluster ? : online/offline;dependencies/VIPs/switch-bet-nodes/ etc..
 + How to check status of each resource within a VCS service group ? : hares -display -attribute State -group <SG> -sys <node>
++ Concepts = jeopardy fencing split-brain ++ complete process to remove disk.
++ Complete process to add new node in VCS cluster ? VxVM = VCS patching complete process ?
++ CTS support case = vxmend -g <DG> -o force off <VOL>;vxmend -g <DG> on vol; vxmend -g <DG> fix clean <VOL>
 +
 +
-
-
++
++
 
 
 === Ansible related (modules/methods/conditions)====
@@ -110,8 +179,12 @@
 
 + Finding if system is phy/virt from OS end ? = dmidecode -t1 or dmidecode | grep -A5 "System Information" or grep vmware or grep Product
 + MCE logs / taking server consoles / firmware upgrades
++ Which HP report is provided for HP-hardware error ? : HP_diags
 +
 +
++
++
+
 
 === VMware related (ESX/datastores/networks)===
 
@@ -121,13 +194,15 @@
 + VMware VM in grey state ? check events logs ?
 + VxVM daemons and VCS daemons .. what if vxconfigd is down ?
 +
++
++
 
 
 == Difference between (random topics)====
 
-+ Vmware thin vs thick provisioning ? Plex vs Sub-disks ?
-+ RHEL version (6 vs 7) (7 vs 8) ? ansible vs puppet ?
-+ TCP vs UDP / Switch vs Router / IPv4 vs IPv6 / SAN vs NAS /
++ Vmware thin vs thick provisioning ? Plex vs Sub-disks ? yum vs rpm ? samba vs ftp ?
++ RHEL version (6 vs 7) (7 vs 8) ? ansible vs puppet ? incident / problem / issue / CR
++ TCP vs UDP / Switch vs Router / IPv4 vs IPv6 / SAN vs NAS /  switch-over vs failover
 +
 +
 
@@ -147,10 +222,11 @@
 + 3 servers on difference versions, how to bring them to same level ? : highest level, patch to make same; compare every config to make same
 + Java Processes getting killed, perform health check from OS end ? (process/services)
 + Server not reachable what all things will you check ? (networking/OS/hardware/performance)
-+
++ VxVM mount was mounted earlier, but when tried remounting it failed ?? : plex/vol was disabled/off, enable it
+
 
 === Solaris related (mixed) ===
 
 + How to copy partition table form one disk to another ? : prtvtoc <> | ...
 
-+
++ Steps to patch the mirrored solaris servers ? : many steps
