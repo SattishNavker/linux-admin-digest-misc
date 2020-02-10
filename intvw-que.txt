@@ -122,8 +122,7 @@
 
 + insmod / rmmod / modprobe / sysctl -a | -w /
 
-+ DNS = PTR/CNAME/A/MX
-
++ DNS = PTR/CNAME/A/MX || Scheduler (0) + init/systemd (1) + kthread/kflush (2) 
 +
 
 +
