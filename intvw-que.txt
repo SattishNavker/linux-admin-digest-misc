@@ -23,7 +23,7 @@
     code, runtime, system tools, system libraries etc. anything that can be installed on a server.
   - This guarantees that the software will always run the same, regardless of its environment.
 
-+
++ Describe your past technical experience, where some incident occured in your career and you found exact problem and you resolved it ?
 
 +
 
@@ -122,11 +122,11 @@
 
 + Which file-system can be expanded ? : 2.6/ext2/3/4 (resize_inode)
 
-+ suid(4) / sgid(2) / sticky(1) = umask(022)
++ suid(4) / sgid(2) / sticky(1) = umask(022) .. PID=0 sched/swapper / PID=1 init-or-systemd / PID=2 kthread/kflush
 
 + what are 4 fundamental components of linux FS ? boot-block(MBR)/super-block(meta)/inode-block/data-block
 
-+
++ Multipathing - multipath -ll / /etc/multipath.conf == blacklist / multipathd -r / -H / reload // scsi_id -g -u -s /block/sdx
 
 +
 
@@ -160,7 +160,11 @@
 
 + How to check if port on another server is open or not ? : telnet <target-ip> <PORT> / nc -zv <target-ip> <port/port-range>
 
-+
++ Socket=Port+IP / Port-numbers = DHCP-68 / SSH-22 / Telnet-23 / FTP-21 / NTP-123 / HTTPS-443/ DNS-53/ Apache-8080/ http-80
+
++ Ping (packet Internet Groper) - ECHO_REQUEST and ECHO_REPLY
+
++ nmcli / proc-net-bonding-bond0 /
 
 +
 
@@ -168,11 +172,11 @@
 
 +
 
-
++
 
 ==== Booting related (grub/initrd/initramfs/rebuild/kdump/)====
 
-+ Location of kernel / grub / initramfs / config / systemmap ? How to open initrd/initramfs and what it contains ? :
++ Location of kernel / grub / initramfs / kdump-initramfs / config / systemmap ? How to open initrd/initramfs and what it contains ? :
 
 + What grub contains ? : initramfs kernel .. check .. location of Grub-config-file for EFI and BIOS systems ?
 
@@ -191,11 +195,12 @@
 + insmod / rmmod / modprobe / sysctl -a | -w /
 
 + DNS = PTR/CNAME/A/MX || Scheduler (0) + init/systemd (1) + kthread/kflush (2)
-+
 
-+
++ timedatectl / hostnamectl / systemctl - unit files etc
 
-+
++ swap is full .. what to do ? per core utilization ?
+
++ gdb / gcore / zombie / kill -l /
 
 +
 
@@ -219,9 +224,11 @@
 
 + RPM to solve its dependencies ? : if all rpms are under same directory then "rpm -i xyz.rpm" resolves all its dependencies.
 
-+ How to remove rpm package ? : rpm -e
++ How to remove rpm package ? : rpm -e ++ yum downgrade redhat-release; yum history undo <trans-id>; yum downgrade <pkg1> <pkg2>;
+  - package-cleanup [--orphans/--problems/--dupes/--leaves]; rpm -Uvh --oldpackage <pkg-ver-rpm>; yum --exclude
+  - rpm -Uvh --rollback "yesterday"/"December31"/"8hoursago"/"19:00" // yum history list all;
 
-+
++ rpm db got currupted .. what to do ? == /var/lib/rpm/
 
 +
 
@@ -238,9 +245,9 @@
 + Concepts = jeopardy fencing split-brain ++ complete process to remove disk.
 + Complete process to add new node in VCS cluster ? VxVM = VCS patching complete process ?
 + CTS support case = vxmend -g <DG> -o force off <VOL>;vxmend -g <DG> on vol; vxmend -g <DG> fix clean <VOL>
-+
-+
-+
++ vxresize / vxassist ... actual creation and expansion // hares -link /  hastart / hagrp
++ what is service group ? heartbeats ? config files ?
++ vgcfgbackup ??
 +
 
 
@@ -295,6 +302,7 @@ redhat
 
 + My steps when git repo is pulled and modified at my end >> git status (unstagged chgs) | git add -A (staging chgs) | git commit -m "abc xyz" |
   last = git push -u origin master (( for first time - git remote add origin <git-repo-url> ))
+
 +
 
 +
@@ -379,4 +387,7 @@ redhat
 
 + How to copy partition table form one disk to another ? : prtvtoc <> | ...
 
-+ Steps to patch the mirrored solaris servers ? : many steps
++ Steps to patch the mirrored solaris servers ? : many steps .... // how to replace failed mirror ?
+
++ cfgadm / metastat / prstat -z / zlogin -c <>/ zonecfg -z <> / zoneadm -z boot -s / etc-zones-zone_name.xml / sparse-root-zones
+  whole-root-zone / branded-root-zone / hbainfo / format-fdisk / devfsadm /
