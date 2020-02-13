@@ -4,7 +4,30 @@
 
 + Projects worked on ? Server hardening aspects ?
 
-+ Current role ?
++ Current role ? ready to work in shifts ? what if you are alone in office and production issue occured ?
+
++ What do you understand by DevOps (culture / tool)? = earlier silos ? What is the need (or advantages) for DevOps?
+ - Increase deployment frequency
+ - Lower failure rate of new releases
+ - Shortened lead time between fixes
+ - Faster mean time to recovery in the event of new release crashing
+
++ What is function of CI (cont integration) server ?
+ - CI server function is to cont..ly integrate all changes being made and committed to repo by different developers and check for compile errors.
+ - It needs to build code several times a day, preferably after every commit so it can detect which commit made the breakage if the breakage happens.
+
++ What is Docker ? :
+  - Docker is a containerization platform which packages your application and all its dependencies together in the form of containers,
+    so as to ensure that your application works seamlessly in any environment be it development or test or production.
+  - Docker containers, wrap a piece of software in a complete filesystem that contains everything needed to run:
+    code, runtime, system tools, system libraries etc. anything that can be installed on a server.
+  - This guarantees that the software will always run the same, regardless of its environment.
+
++
+
++
+
++
 
 
 ==== Shell-scripting related ===
@@ -53,7 +76,7 @@
 
 + How to remove empty lines in file ?? using sed/awk/egrep/ ? : sed '/^[[:space:]]*$/d' <file> // sed -r '/^\s*$/d' <file> // awk 'NF' <file>
   - egrep -v "^$" <file> // awk '!/^$/' <file> // perl -pe s'/^\n|^[\ ]*\n//g' <file> // sed -i to make changes to file
-  
+
 +
 
 +
@@ -149,9 +172,9 @@
 
 ==== Booting related (grub/initrd/initramfs/rebuild/kdump/)====
 
-+ How to open initrd/initramfs and what it contains ? :
++ Location of kernel / grub / initramfs / config / systemmap ? How to open initrd/initramfs and what it contains ? :
 
-+ What grub contains ? : initramfs kernel .. check
++ What grub contains ? : initramfs kernel .. check .. location of Grub-config-file for EFI and BIOS systems ?
 
 + kernel = noop/elevator/deadline
 
@@ -168,6 +191,12 @@
 + insmod / rmmod / modprobe / sysctl -a | -w /
 
 + DNS = PTR/CNAME/A/MX || Scheduler (0) + init/systemd (1) + kthread/kflush (2)
++
+
++
+
++
+
 +
 
 +
@@ -217,7 +246,65 @@
 
 === Ansible related (modules/methods/conditions)====
 
++ What is the concept of idempotency ? :
 
++ Diff between = Ansible - python/yml/agentless | Puppet - Ruby/DSL/agent-oriented  ?
+
++ When to use {{}} ;
+
++ Where to write "fork" in ansible playbook ?  :
+
++ What is CI/CD ??
+
++ what are "facts" in ansible ?
+
++
+
++
+
++
+
++
+
+
+===== Docker related (Dockerfile/docker/hub/image/layer/pull/run-dt/exec-it/SWARM/compose) ====
+
++ https://www.fullstack.cafe/blog/docker-interview-questions-and-answers
+
++ https://www.edureka.co/blog/interview-questions/docker-interview-questions/
+
++ docker version / docker info / docker --help / docker <command> --help / docker login / docker pull <image_name> / docker run -it -d <image_name> /
+  docker ps / docker exec -it <container id> bash / docker start/stop/kill <container_id> / docker commit <conatainer id> <username/imagename> /
+  docker push <username/image name> / docker rm <container id> / docker rmi <image-id> / docker build <path to dockerfile> / docker system prune /
+  docker ps -a / docker rm -f <container_id> / docker stats / docker events
+
++
+
++
+
++
+
++
+
++
+
+
+
+===== Mongo DB related ====
+
++
+
++
+
++
+
++
+
++
+
++
+
++
 
 === Hardware related (console/failures/NMIs-n-switches) ===
 
@@ -237,7 +324,7 @@
 + RDM (Raw Device Mapping) disks / vmdk disks ? VMware-clone-vs-VMware-templates ?
 + VMware VM in grey state ? check events logs ?
 + VxVM daemons and VCS daemons .. what if vxconfigd is down ?
-+
++ Type1/Type2 hypervisior ? what is virtualization ? what is containerization ?
 +
 +
 
@@ -247,7 +334,7 @@
 + Vmware thin vs thick provisioning ? Plex vs Sub-disks ? yum vs rpm ? samba vs ftp ?
 + RHEL version (6 vs 7) (7 vs 8) ? ansible vs puppet ? incident / problem / issue / CR
 + TCP vs UDP / Switch vs Router / IPv4 vs IPv6 / SAN vs NAS /  switch-over vs failover
-+
++ puppet vs ansible ? stateful vs stateless ? docker image vz layer ? docker add vs copy ? virtualization(hypervisior) vs containerization ?
 +
 
 
