@@ -277,6 +277,21 @@
   docker ps / docker exec -it <container id> bash / docker start/stop/kill <container_id> / docker commit <conatainer id> <username/imagename> /
   docker push <username/image name> / docker rm <container id> / docker rmi <image-id> / docker build <path to dockerfile> / docker system prune /
   docker ps -a / docker rm -f <container_id> / docker stats / docker events
+redhat
+
++ Namespaces in docker : Docker uses namespaces of various kinds to provide the isolation that containers need in order to remain portable and refrain from affecting the remainder of the host system. Each aspect of a container runs in a separate namespace and its access is limited to that namespace
+
++
+
++
+
++
+
++
+
+==== Git/DVCS related ======
+
++ Various git repository hosting functions ? : Github/Gitlab/bitbucket/sourceforge/GitEnterprise.
 
 +
 
@@ -287,12 +302,12 @@
 +
 
 +
-
 
 
 ===== Mongo DB related ====
 
-+
++ Namespace in mongoDB (same term - namespace in docker ?) ? =
+
 
 +
 
@@ -335,6 +350,10 @@
 + RHEL version (6 vs 7) (7 vs 8) ? ansible vs puppet ? incident / problem / issue / CR
 + TCP vs UDP / Switch vs Router / IPv4 vs IPv6 / SAN vs NAS /  switch-over vs failover
 + puppet vs ansible ? stateful vs stateless ? docker image vz layer ? docker add vs copy ? virtualization(hypervisior) vs containerization ?
++ The concept behind stateful applications is that they store their data onto the local file system.
++
++
++
 +
 
 
