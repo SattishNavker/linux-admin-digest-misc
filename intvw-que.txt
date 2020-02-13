@@ -14,13 +14,58 @@
    awk -F "/" '{ for(i=2;i<NF;i++) printf $i "/"; printf $NF }' <target-file> > <target-file2>
    sed 's/^/\//' <target-file2> > <target-file3>
 
-+ $0 / $n / $# / $* / $@ / $? / $$ / $! + script to set variable on every login ? .bashrc .bash_profile
++ $0 / $n(each arg) / $#(#ofArgs) / $*('...') / $@ ("." "." ".") / $? (statu of last exec) / $$ (current) / $! (last-background) + script to set variable on every login ? .bashrc .bash_profile
+
++ "ls" with exec(shell-terminates) without forks .. Exec overlays newly forked process on current process. ls executes and on exit it closes process
+
++ How will you write a awk/sed-command to work like "wc -l" ? : awk 'END {print NR}' <file>; sed -n '$=';
+
++ I want to find out the number of occuraces of word=ABC in a given-file ? : grep -c "ABC" <file>
+
++ What are 3 standard streams in Linux ? I want to read all input to command from file1 direct - all output to file2 - and errors to file3, how to achieve this ?
+  : 0=input / 1=output / 2=error ; command < file1 1>file2 2>file3
+
++ How will you print 96th line of file using tail/head commands ? And how to print 20th line without tail/head command ?
+  : tail +96 <file> | head -1 // sed -n '10p' <file>
+
++ emulate tac (print in reverse order upside-down = opp of cat) using sed ? : less used by admins : paste / join / tac / rev / ed
+  - way1 : sed '1! G; h;$!d' <file>
+  - way2 : awk '{a[i++]=$0} END {for (j=i-1;j>=0;) print a[j--] }' test
+  - way3 : using ed
+  ed -s <file> << IN
+  g/^/m0
+  ,p
+  q
+  IN
+  - way4 : perl >> cat <file> | perl -e 'while(<>) { push @a, $_; } foreach (reverse(@a)) { print; }'
+
++ emulate rev command (or print string in reverse order ) using shell scripting / sed / perl ? == many ways to do
+  -way1 : perl >> echo abcd | perl -ne 'chomp;print scalar reverse;'
+  -way2 : awk >> echo 1234 | awk '{ for (i = length; i!=0; i--) x = x substr($0, i, 1);}  END {print x}'
+  -way3 : shell script :
+    #!/bin/bash
+    read -p "Enter string" str
+    for (( i=$len-1; i >= 0; i-- ))
+    do
+     revs="$revs${str:$i:1}"
+    done
+    echo "$revs"
+
++ How to remove empty lines in file ?? using sed/awk/egrep/ ? : sed '/^[[:space:]]*$/d' <file> // sed -r '/^\s*$/d' <file> // awk 'NF' <file>
+  - egrep -v "^$" <file> // awk '!/^$/' <file> // perl -pe s'/^\n|^[\ ]*\n//g' <file> // sed -i to make changes to file
+  
++
+
++
+
++
 
 +
 
 +
 
 +
+
 
 
 ==== File-system related ===
@@ -56,7 +101,7 @@
 
 + suid(4) / sgid(2) / sticky(1) = umask(022)
 
-+
++ what are 4 fundamental components of linux FS ? boot-block(MBR)/super-block(meta)/inode-block/data-block
 
 +
 
@@ -122,7 +167,7 @@
 
 + insmod / rmmod / modprobe / sysctl -a | -w /
 
-+ DNS = PTR/CNAME/A/MX || Scheduler (0) + init/systemd (1) + kthread/kflush (2) 
++ DNS = PTR/CNAME/A/MX || Scheduler (0) + init/systemd (1) + kthread/kflush (2)
 +
 
 +
