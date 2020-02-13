@@ -293,8 +293,8 @@ redhat
 
 + Various git repository hosting functions ? : Github/Gitlab/bitbucket/sourceforge/GitEnterprise.
 
-+
-
++ My steps when git repo is pulled and modified at my end >> git status (unstagged chgs) | git add -A (staging chgs) | git commit -m "abc xyz" |
+  last = git push -u origin master (( for first time - git remote add origin <git-repo-url> ))
 +
 
 +
