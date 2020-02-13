@@ -206,6 +206,7 @@
 
 +
 
++
 
 === Patching related (yum/rpm/dnf/apt/zypper/build-source)=====
 
@@ -236,6 +237,8 @@
 
 +
 
++
+
 === VCS / VxVM questions (commands/errors)===
 
 + What all things needs to be considered before building a two node VCS cluster ? (pre-requisites) : HB/LLT/Speed/cluster_name/node_names etc..
@@ -250,6 +253,11 @@
 + vgcfgbackup ??
 +
 
++
+
++
+
++
 
 === Ansible related (modules/methods/conditions)====
 
@@ -328,6 +336,39 @@ redhat
 +
 
 +
+
+
+==== ELK-stack related ====
+
++ configuration files >> single node :
+
+   config files = etc-(or custom location) / config / = elsaticsearch.yml + kibana.yml +
+
+   elasticsearch.yml >> 6.2.1 // higher-versions have change in names of below parameters a bit >>
+      cluster.name: my-app1
+      node.name: elastic1
+      path.data: /home/user1/elastic.data
+      path.logs: /home/user1/elastic.log
+      network.host: 192.168.10.10
+      http.port: 9200
+      discovery.zen.ping.unicast.hosts: ["192.168.10.10"] 
+
+   kibana.yml >> 6.2.1 // higher-versions have change in names of below parameters a bit >>
+    server.host: "192.168.10.10"
+    server.name: "192.168.10.10"
+    elasticsearch.url: "http://192.168.10.10:9200"
+    elasticsearch.username: "user1"
+    elasticsearch.password: "pwd1"
++
+
++
+
++
+
++
+
++
+
 
 === Hardware related (console/failures/NMIs-n-switches) ===
 
