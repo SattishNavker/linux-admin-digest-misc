@@ -12,7 +12,7 @@
  - Shortened lead time between fixes
  - Faster mean time to recovery in the event of new release crashing
 
-+ What is function of CI (cont integration) server ?
++ What is function of CI (cont integration) / CD server ?
  - CI server function is to cont..ly integrate all changes being made and committed to repo by different developers and check for compile errors.
  - It needs to build code several times a day, preferably after every commit so it can detect which commit made the breakage if the breakage happens.
 
@@ -25,10 +25,19 @@
 
 + Describe your past technical experience, where some incident occured in your career and you found exact problem and you resolved it ?
 
++ Why Git is used ?
+
++
+
 +
 
 +
 
++
+
++
+
++
 
 ==== Shell-scripting related ===
 
@@ -77,13 +86,20 @@
 + How to remove empty lines in file ?? using sed/awk/egrep/ ? : sed '/^[[:space:]]*$/d' <file> // sed -r '/^\s*$/d' <file> // awk 'NF' <file>
   - egrep -v "^$" <file> // awk '!/^$/' <file> // perl -pe s'/^\n|^[\ ]*\n//g' <file> // sed -i to make changes to file
 
-+
++ Steps in creation and execution of shell scripts ? Ways of exeution shell scripts ?
+  - create "demo.sh" / Add = #!/bin/bash .. and script part below / chmod u+x demo.sh / execute it
+  - 1 > Using obsolute path /path/to/script.sh || 2 > cd /path/to/;./script.sh || 3 > with interpreter : $sh script.sh or $bash script.sh
+  - 4 >  exec ./script.sh { it will execute the script in the current shell without forking a sub shell.. and will exit post execution}
+  - 5 > . ./script.sh { it will execute the script in the current shell without forking a sub shell.}
+  - 6 > source ./script.sh = The builtin source command is synonym for the . (dot) explained above.
 
-+
++ In my bash shell I want my prompt to be of format '$"Present working directory":"hostname">
+  and load a file containing a list of user-defined functions as soon as I log in, how will you automate this?
+  - populate .bash_profile with "export PS1='$ `pwd`:`hostname`>' .File1"
 
-+
++ How to list only usernames of all user accounts present locally on Linux ? : way1 :: cat /etc/passwd | awk -F : '{ print $1 }'
 
-+
++ How can I continuously watch a log file for new logs that are getting appended ? : way1 = tail -f /path/to/logfile
 
 +
 
@@ -123,10 +139,26 @@
 + Which file-system can be expanded ? : 2.6/ext2/3/4 (resize_inode)
 
 + suid(4) / sgid(2) / sticky(1) = umask(022) .. PID=0 sched/swapper / PID=1 init-or-systemd / PID=2 kthread/kflush
+ == scheduler (pid=0 not i/o scheduler) scheduling policy of a process. Check scheduling policy of any process : $ chrt -p <PID>
+ == man chrt = process scheduling policies SCHED_OTHER, SCHED_FIFO, SCHED_RR, SCHED_BATCH, or SCHED_IDLE
 
 + what are 4 fundamental components of linux FS ? boot-block(MBR)/super-block(meta)/inode-block/data-block
 
 + Multipathing - multipath -ll / /etc/multipath.conf == blacklist / multipathd -r / -H / reload // scsi_id -g -u -s /block/sdx
+
++ /dev = what are block and character devices ? What is a major and minor number? How To Identify Major and Minor Number For Block Devices in Linux ?
+  - sar -d // major = device type | minor = instance of that device type
+  - diff between character devices and block devices ?
+
++ Name some I/O schedulers and its working ? : command line elevator = <i/o scheduler> (global for all disks)
+  - cat /sys/block/sda/queue/scheduler ||  echo 'deadline' > /sys/block/sda/queue/scheduler << way to operate schedulers per disk basis
+  - noop deadline [cfq]  == noop = no-operation || deadline = deadline favors reads over writes || cfq = Completely Fair Queuing
+
++
+
++
+
++
 
 +
 
@@ -138,13 +170,11 @@
 
 + How to check link-speed and duplex for NIC ? : Linux = ethtool ethX // Solaris = dladm show-dev
 
-+ In bonding how to change active link(slave) on line ?
-
++ In bonding how to change active link(slave) online ?
   - cat /proc/net/bonding/bond0 -- to see bonding info like slaves/policy/active-slave elastic
   - ifenslave -c bondX <2nd-nic> ----c stands for “change active”
 
 + How to change active faulty NIC within bonding online ?
-
   - Steps -- 1> change active slave to secondary one in bond ; 2> Add new healthy NIC; 3> Remove faulty NIC; 4> change active-slave to new-NIC;
   - method1 : cat /proc/net/bonding/bond0; ifenslave -c bondX <2nd-nic>; ifenslave bondX <new-nic>; ifenslave -d bondX <old-pri-nic
   - method2 : cat /sys/class/net/bondX/bonding/slaves; echo -<old-pri-nic> > /sys/.../slaves; echo +<new-nic> > /sys/.../slaves
@@ -165,6 +195,10 @@
 + Ping (packet Internet Groper) - ECHO_REQUEST and ECHO_REPLY
 
 + nmcli / proc-net-bonding-bond0 /
+
++ what is collision domain ? what is broadcast domain ?
+
++
 
 +
 
@@ -198,9 +232,22 @@
 
 + timedatectl / hostnamectl / systemctl - unit files etc
 
-+ swap is full .. what to do ? per core utilization ?
++ swap is full .. what to do ?
 
-+ gdb / gcore / zombie / kill -l /
++ gdb / gcore / What are zombie processes ? reason behind zombie processes ? / kill -l (default signal / "-9" what is it ?) /
+
++ how to find per core utilization using top command ?
+
++ If I want to keep java processes running all the time on Linux; then what all are the available options ?
+  - systemctl unit file, to keep service or targeted process up and running
+  - oom_kill score , nice value, monitoring to alert when its killed and start again on getting killed
+  - increasing rt_priority(realtime) / setup frequent cron monitoring script and instruct to start java whenever killed
+
++
+
++
+
++
 
 +
 
@@ -226,12 +273,14 @@
 + RPM to solve its dependencies ? : if all rpms are under same directory then "rpm -i xyz.rpm" resolves all its dependencies.
 
 + How to remove rpm package ? : rpm -e ++ yum downgrade redhat-release; yum history undo <trans-id>; yum downgrade <pkg1> <pkg2>;
-  - package-cleanup [--orphans/--problems/--dupes/--leaves]; rpm -Uvh --oldpackage <pkg-ver-rpm>; yum --exclude
+  - rpm -Uvh --oldpackage <pkg-ver-rpm>; yum --exclude
   - rpm -Uvh --rollback "yesterday"/"December31"/"8hoursago"/"19:00" // yum history list all;
 
-+ rpm db got currupted .. what to do ? == /var/lib/rpm/
++ rpm db got currupted .. what to do ? == location of rpm-db : /var/lib/rpm/
 
-+
++ How clean-up the locally-installed RPMs ? How to solve issue with yum update or yum install when it fails -
+  with package conflict between 64 bit and 32 bit package architectures ?
+ - package-cleanup [--orphans/--problems/--dupes/--leaves/--cleandupes] == comes under yum-utils
 
 +
 
@@ -351,7 +400,7 @@ redhat
       path.logs: /home/user1/elastic.log
       network.host: 192.168.10.10
       http.port: 9200
-      discovery.zen.ping.unicast.hosts: ["192.168.10.10"] 
+      discovery.zen.ping.unicast.hosts: ["192.168.10.10"]
 
    kibana.yml >> 6.2.1 // higher-versions have change in names of below parameters a bit >>
     server.host: "192.168.10.10"
@@ -400,7 +449,7 @@ redhat
 + TCP vs UDP / Switch vs Router / IPv4 vs IPv6 / SAN vs NAS /  switch-over vs failover
 + puppet vs ansible ? stateful vs stateless ? docker image vz layer ? docker add vs copy ? virtualization(hypervisior) vs containerization ?
 + The concept behind stateful applications is that they store their data onto the local file system.
-+
++ Priority vs Severity || Break vs Continue || problem and incident || loops for vs while ?
 +
 +
 +
