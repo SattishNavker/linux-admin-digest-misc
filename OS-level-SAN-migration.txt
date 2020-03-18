@@ -1,5 +1,5 @@
 
-SAN migration (possible vendors involved : EMC NetApp 3PAR)
+AsPerGuidance == SAN migration (possible vendors involved : EMC NetApp 3PAR)
 
 --- Double-check this plan ---- Try on dummy ---
 
@@ -66,3 +66,52 @@ SAN migration (possible vendors involved : EMC NetApp 3PAR)
 
    vxdisk set <disk-name> clone=<off/on>
    ++ # vxdisk updateudid <disk-name>
+
+
+-----------
+As-per-Exp == VMserver had limitation of 4 RDM disks only and expansion was requested. Hence decided to replace old 2 disks (of lesser size) with new 2 disks of bigger size.
+
+[1] "sdx" disks corrosponding to "emc/vxvm" disks (mapping)
+dzdo df -h;dzdo vxdmpadm getsubpaths;lsblk | grep -i sdx | grep -v part;lsblk | grep -i sdx | grep -v part;lsblk | grep -i sdx | grep -v part;
+
+[2] Check existing volumes and plex's using == vxprint -htg <DG>
+
+[3] VM needs to shutdown (if VCS then offline it) to add RDM by Vmware team. After adding RDM and server is up, we have rescan scsi buses for new RDM disk.
+
+[4] Initialize newly assigned disk(1) under vxvm. vxdisksetup -i emc0_xxx
+
+[5] Add new disk(1) to existing DG (with proper disk label).
+
+[6] Mirror volumes and check status using vxtask list.
+
+    # nohup vxassist -g <DG> mirror <VOL> &
+
+[7] After mirroring check "vxprint -hvt <DG>"
+
+[8] Now 'detach' (not to disassociate now) all old plex that you can see in "vxprint -hvt <DG>" output, that are created from old disks. (Be careful)
+    DETACH plex means = a write to vol is not reflected to plex. A read req from vol will never be satisfied from detached plex.
+
+    # vxplex -g <DG> det <VOL-01-plex-dcl-plex as well>
+
+[9] vxprint .. old plex are detached and volumes still enabled using new mirrored plex.
+
+[10] Now ask DB/App team to do health checks, if everything is fine - then remove old plex's and sub-disk's from DG and finally remove old disk from VxVM.
+
+  if any issue then re-attach old plexs
+  # vxplex -g <DG> att <VOL>
+
+  to dis-associate plexs (data loss) :
+  # vxplex -g <DG> -o rm dis <VOL-and-dcl as well>
+
+  remove disk from DG :
+  # vxdg -g <DG> rmdisk <disk-label>  ---- here might need vxdisk reclaim as well
+
+  remove disk from vxvm
+  # vxdiskunsetup -C <disk>
+
+[11] Resize volume with additional capacity of newly added disk :
+
+    vxassist -g <DG> maxgrow <VOL>
+    vxassist -g <DG> growto <VOL> <size shown in above o/p>
+    vxresize -g <DG> <VOL> <size shown in above o/p>
+    df -h --- check new size
