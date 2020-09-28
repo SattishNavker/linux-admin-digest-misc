@@ -1,0 +1,54 @@
+#user = ENV['USERNAME'] || ENV['USER']
+#ENV['VAGRANT_SERVER_URL'] = ENV['VAGRANT_SERVER_URL'] || 'https://xxx.com/xyz/.box'
+
+Vagrant.configure("2") do |config|
+
+ config.vm.box = "rhel8vm1"
+ config.vm.hostname = "rhel8vm1"
+ file_to_disk1 = 'large_disk1.vdi'
+ file_to_disk2 = 'large_disk2.vdi'
+ 
+  ## Network / RAM / CPU here ##
+  ##
+
+  config.vm.provider 'virtualbox' do |vb|
+   vb.customize ['modifyvm', :id, '--cableconnected1', 'on']
+   #vb.customize ['modifyvm', :id, '--natdnshostresolver1', 'on']
+   vb.customize['modifyvm', :id, '--memory'. 1024]
+
+  ## Disks added here ##
+  ##
+
+   unless File.exist?(file_to_disk1)
+    vb.customize ['createhd', '--filename', file_to_disk1, '--size', 1 * 1024]
+   end
+   vb.customize ['storageattach', :id, '--storagectl', 'IDE Controller', '--port', 1, '--device', 0, '--type', 'hdd', 'medium', file_to_disk1]
+
+   unless File.exist?(file_to_disk2)
+    vb.customize ['createhd', '--filename', file_to_disk2, '--size', 1 * 1024]
+   end
+   vb.customize ['storageattach', :id, '--storagectl', 'IDE Controller', '--port', 1, '--device', 1, '--type', 'hdd', 'medium', file_to_disk2]
+
+  ## Ports forwarded here ##
+  ##
+  
+  config.vm.network "forwarded_port", guest: 3000, host: 8001, id: 'grafana'
+  config.vm.network "forwarded_port", guest: 8088, host: 8002, id: 'jenkins'
+  config.vm.network "forwarded_port", guest: 4440, host: 8003, id: 'rundeck' #, host_ip: "127.0.0.1", guest_ip: "127.0.0.1", protocol: "tcp" 
+  config.vm.network "forwarded_port", guest: 9090, host: 8004, id: 'cockpit'
+  config.vm.network "forwarded_port", guest: 80, host: 8005, id: 'reserved-1' #, auto_correct: true
+  config.vm.network "forwarded_port", guest: 17588, host: 8006, id: 'reserved-2'
+  
+  ## NIC added here ##
+  ##
+  config.vm.network "private_network", ip: "128.28.8.11", virtualbox_intnet: true
+  config.vm.network "private_network", ip: "128.28.8.12", virtualbox_intnet: true
+  config.vm.network "private_network", ip: "128.28.8.13", virtualbox_intnet: true
+  config.vm.network "private_network", ip: "128.28.8.14", virtualbox_intnet: true
+  #config.vm.network "public_network", ip: "128.28.8.11", virtualbox_intnet: true
+
+  config.vm.provision "shell", path: "provision-script.sh"
+
+end
+
+
