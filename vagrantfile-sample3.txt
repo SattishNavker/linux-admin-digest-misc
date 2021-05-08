@@ -1,0 +1,84 @@
+#-*- mode: ruby -*-
+#vi: set ft=ruby
+
+ENV['VAGRANT_SERVER_URL'] = 'http://xx.com/.box'
+
+$hosts = <<-EOF
+cat > /etc/hosts <<EOF2
+128.28.8.10 master.local 	master
+128.28.8.11 rhel6-client.local 	rhel6-client1
+128.28.8.12 rhel7-client.local  rhel7-client1
+128.28.8.11 rhel8-client.local  rhel8-client1
+EOF2
+EOF
+
+Vagrant.configure("2") do |config|
+
+ config.vm.provider "virtualbox" do |vb|
+  vb.memory = "1024"
+  vb.cpus = "2"
+ end
+
+ config.vm.provision 'shell', inline:$hosts
+
+ ## Master
+ config.vm.define "master" do |master|
+   config.vm.box_url = 'http://xxx.com/.box'
+   config.vm.box = 'master-box'
+  
+   master.vm.hostname = "master"
+   master.vm.network "private_network", ip: "128.18.8.10", virtualbox_intnet: true
+ 
+   master.vm.provision 'shell', inline: <<-SHELL
+    echo "#{me}" > /var/local/username
+    bash /vagrant/provision_master.sh
+   SHELL
+ end
+
+ ## rhel6_client1
+ config.vm.define "rhel6_client1" do |rhel6_client1|
+   config.vm.box_url = 'http://xxx.com/.box'
+   config.vm.box = 'dir1/rhel6vm1'
+
+   rhel6_client1.vm.hostname = "rhel6_client1"
+   rhel6_client1.vm.network "private_network", ip: "128.18.8.11", virtualbox_intnet: true
+
+   rhel6_client1.vm.provision 'shell', inline: <<-SHELL
+    echo "#{me}" > /var/local/username
+    bash /vagrant/provision_master.sh
+   SHELL
+ end
+
+
+ ## rhel7_client1
+ config.vm.define "rhel7_client1" do |rhel7_client1|
+   config.vm.box_url = 'http://xxx.com/.box'
+   config.vm.box = 'dir1/rhel7vm1'
+
+   rhel7_client1.vm.hostname = "rhel7_client1"
+   rhel7_client1.vm.network "private_network", ip: "128.18.8.12", virtualbox_intnet: true
+
+   # port forward for
+   rhel7_client1.vm.network "forwarded_port", guest: 3000, host: 7001
+
+   rhel7_client1.vm.provision 'shell', inline: <<-SHELL
+    echo "#{me}" > /var/local/username
+    bash /vagrant/provision_master.sh
+   SHELL
+ end
+
+ ## rhel8_client1
+ config.vm.define "rhel8_client1" do |rhel8_client1|
+   config.vm.box_url = 'http://xxx.com/.box'
+   config.vm.box = 'dir1/rhel8vm1'
+
+   rhel8_client1.vm.hostname = "rhel8_client1"
+   rhel8_client1.vm.network "private_network", ip: "128.18.8.13", virtualbox_intnet: true
+
+   rhel8_client1.vm.provision 'shell', inline: <<-SHELL
+    echo "#{me}" >/var/local/username
+    bash /vagrant/provision_master.sh
+   SHELL
+ end
+
+end
