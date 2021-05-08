@@ -1,0 +1,56 @@
+
+[1] Sample basic Rundeck YAML inventory :
+
+------------
+- my-server1.example.com:
+  nodename: actual-name-my-server1.example.com
+  tags: 'GRP1,ID1,NAME1,SIMPLE-EXAMPLE'
+- my-server2.example.com:
+  description: Here is example of complex one
+  hostname: host2.example.com
+  nodename: my-server2.example.com
+  ipaddress: 127.0.0.1
+  env: dev
+  type: xxx
+  serverid: poc2xyz
+  dc: datacenter1
+  vcpus: 16
+  ram: 64
+  disk: 500
+  osArch: x86_64
+  osFamily: Linux
+  osName: RHEL
+  osVersion: 8.3
+  osPatch: xyz
+  tags: 'complex,example,here'
+  username: service-account2
+------------
+
+[2] Sample basic Ansible YAML inventory :
+
+<< it can be made even more complex, by defining vars at each level any by having multiple children>>
+
+-----------
+Infra:
+  children:
+    inventory1-label:
+       hosts:
+          my-server1.example.com:
+            base_dir: /opt/app
+            ip_address: 127.0.0.1
+            #ansible_become_password: '{{ ab_pwd_node1 }}'
+            dns_name: xyz.com
+          my-server2.example.com:
+            ansible_python_interpreter: '/usr/libexec/platform-python'
+          my-server1.example.com:
+    vars:
+      variable_user: '{{ variable_user }}'
+      ansible_connection: ssh
+      ansible_user: '{{ variable_user }}'
+      account1: app-account1
+      ansible_become_password: '{{ variable_ansible_become_password }}'
+      repo_user: vagrant
+      become_flag: True
+-----------
+
+[3]
