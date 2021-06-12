@@ -1,0 +1,32 @@
+
+#export DOCKER_REG=xyz.com:port
+#docker image tag docker.io/grafana/grafana:8.0.0 ${DOCKER_REG}/grafana/grafana:8.0.0
+#docker push ${DOCKER_REG}/grafana/grafana:8.0.0
+
+kubectl apply -f 1-k8s-namespace-grafana.yml
+kubectl create deployment grafana --image=xyz.com:port/grafana/grafana:8.0.0 -n grafana-dev
+kubectl apply -f 2-k8s-secrets-grafana.yml
+kubectl apply -f 3-k8s-service-grafana.yml
+kubectl apply -f 4-k8s-ingress-grafana.yml
+
+kubectl get namespaces
+kubectl get namespaces <name>
+kubectl describe namespaces <name>
+kubectl delete namespaces <name>
+
+kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
+
+---------------------------------
+>> nginx-pod-sample.yml (no external port) >>>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-webserver
+  namespace: my-infra
+spec:
+  containers:
+  - name: nginx-webserver
+    image: xyz.com:port/nginx:1.21.0
+    ports:
+    - containerPort: 80
+---------------------------------------

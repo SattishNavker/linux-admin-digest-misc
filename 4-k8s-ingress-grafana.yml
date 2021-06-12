@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: grafana-dev-ingress
+  namespace: grafana-dev
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - abc.com
+        secretName: grafana-dev-secret
+  rules:
+    - host: abc.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: grafana-dev-svc
+              servicePort: 80
+---
